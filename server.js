@@ -8,9 +8,16 @@ const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
 const filePath = path.join(__dirname, "public")
-const file = "index.html"
 
 const server = http.createServer((req, res) => {
+
+  let file = req.url === "/" ? "index.html" : req.url
+  const ext = path.extname(file)
+
+  let contentType = "text/html"
+
+  if (ext === ".css") contentType = "text/css"
+  if (ext === ".j") contentType = "application/javascript"
 
   fs.readFile(path.join(filePath, file), (err, fileContent) => {
 
@@ -20,7 +27,7 @@ const server = http.createServer((req, res) => {
       return
     }
 
-    res.writeHead(200, {"Content-Type": "text/html"})
+    res.writeHead(200, {"Content-Type": [contentType]})
     res.end(fileContent)
   });
 
