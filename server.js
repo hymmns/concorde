@@ -2,6 +2,7 @@ import http from "node:http"
 import fs from "node:fs"
 import path from "node:path"
 import { fileURLToPath } from "node:url"
+import { WebSocketServer } from "ws"
 
 const PORT = 8080
 const __filename = fileURLToPath(import.meta.url)
@@ -31,8 +32,21 @@ const server = http.createServer((req, res) => {
     res.end(fileContent)
   });
 
-  
 })
+
+const wss = new WebSocketServer({ server })
+let browserClients = [] 
+
+wss.on("connection", (ws) => {
+  browserClients.push(ws)
+
+  ws.send("connected")
+
+  ws.on("close", () => {
+    browserClients = browserClients.filter(cl => cl !== ws)
+  })
+})
+
 server.listen(PORT, () => {
   console.log(`http://localhost:${PORT}`)
 })
