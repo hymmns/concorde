@@ -40,7 +40,11 @@ let browserClients = []
 wss.on("connection", (ws) => {
   browserClients.push(ws)
 
-  ws.send("connected")
+  fs.watch(__dirname, { recursive: true }, (eventType, filename) => {
+    if (eventType === "change") {
+      browserClients.forEach(cl => cl.send("reload"))
+    }
+  })
 
   ws.on("close", () => {
     browserClients = browserClients.filter(cl => cl !== ws)
