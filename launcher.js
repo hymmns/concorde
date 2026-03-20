@@ -8,7 +8,6 @@ function startServer() {
 }
 
 fs.watch("server.js", () => {
-  console.log("server process: ", serverProcess)
   if (serverProcess) serverProcess.kill()
   
   startServer()
